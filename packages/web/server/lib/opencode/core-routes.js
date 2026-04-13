@@ -277,8 +277,29 @@ export const registerCommonRequestMiddleware = (app, dependencies) => {
 
   app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-  app.use((req, _res, next) => {
-    console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+  app.use((req, res, next) => {
+    const queryStr = Object.keys(req.query).length > 0 ? `?${new URLSearchParams(req.query).toString()}` : '';
+    const bodyKeys = Object.keys(req.body || {});
+    const bodyStr = bodyKeys.length > 0 ? ` body=${JSON.stringify(req.body)}` : '';
+
+    const originalSend = res.send;
+    const originalJson = res.json;
+    let responseBody = null;
+    res.send = function (body) {
+      responseBody = body;
+      return originalSend.call(this, body);
+    };
+    res.json = function (body) {
+      responseBody = body;
+      return originalJson.call(this, body);
+    };
+
+    res.on('finish', () => {
+      const statusStr = res.statusCode >= 400 ? ` ${res.statusCode}` : '';
+      const respBodyStr = responseBody ? ` ->${statusStr} ${typeof responseBody === 'string' ? responseBody.slice(0, 200) : JSON.stringify(responseBody)?.slice(0, 200)}` : ` ->${statusStr}`;
+      console.log(`${new Date().toISOString()} - ${req.method} ${req.path}${queryStr}${bodyStr}${respBodyStr}`);
+    });
+
     next();
   });
 };
