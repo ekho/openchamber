@@ -21,6 +21,7 @@ import { cn } from '@/lib/utils';
 import { useI18n } from '@/lib/i18n';
 const LANGUAGE_OPTIONS = [
     { value: 'en-US', label: 'English' },
+    { value: 'ru-RU', label: 'Русский' },
     { value: 'es-ES', label: 'Español' },
     { value: 'fr-FR', label: 'Français' },
     { value: 'de-DE', label: 'Deutsch' },
