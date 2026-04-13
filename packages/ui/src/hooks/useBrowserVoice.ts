@@ -73,15 +73,9 @@ const LANGUAGE_CHANGE_EVENT = 'openchamber:voice-language-changed';
 const CONVERSATION_MODE_CHANGE_EVENT = 'openchamber:voice-conversation-mode-changed';
 const FINAL_TRANSCRIPT_SETTLE_MS = 1200;
 const DEVICE_CHANGE_RESTART_DELAY_MS = 700;
-const BLOCKED_SPEECH_LANGUAGES = new Set(['ru', 'ru-RU']);
-
 const sanitizeSpeechLanguage = (lang: string): string => {
   const normalized = (lang || '').trim();
   if (!normalized) {
-    return 'en-US';
-  }
-  const base = normalized.split('-')[0].toLowerCase();
-  if (BLOCKED_SPEECH_LANGUAGES.has(normalized) || BLOCKED_SPEECH_LANGUAGES.has(base)) {
     return 'en-US';
   }
   return normalized;
